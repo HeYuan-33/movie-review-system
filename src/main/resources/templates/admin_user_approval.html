@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Approval</title>
+</head>
+<body>
+<h2>User Approval</h2>
+<div th:each="user : ${users}">
+    <p th:text="'Username: ' + ${user.username}"></p>
+    <p th:text="'Email: ' + ${user.email}"></p>
+    <p th:text="'Status: ' + ${user.status}"></p>
+    <button th:if="${user.status == 'PENDING'}" th:onclick="'approveUser(' + ${user.id} + ')'" >Approve</button>
+</div>
+</body>
+</html>

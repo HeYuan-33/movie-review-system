@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Rankings</title>
+</head>
+<body>
+<h2>Top Movies</h2>
+<div th:each="movie : ${movies}">
+  <h3 th:text="${movie.title}"></h3>
+  <p th:text="'Rating: ' + ${movie.rating}"></p>
+</div>
+</body>
+</html>
