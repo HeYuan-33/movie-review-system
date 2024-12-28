@@ -1,4 +1,4 @@
-## 大二做的javaweb开发的影评系统
+## javaweb开发的影评系统
 
 ## 基于Spring Boot和MySQL数据库进行开发。
 ## 前端页面设计使用Thymeleaf技术。
