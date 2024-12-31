@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户管理 - hh影评网站</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            padding: 2rem 0;
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+            color: #ecf0f1;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .nav-item:hover {
+            background: #34495e;
+        }
+
+        .nav-item.active {
+            background: #3498db;
+        }
+
+        .nav-item a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .content-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+        }
+
+        .users-table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .users-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .users-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .users-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #ffeaa7;
+            color: #d35400;
+        }
+
+        .status-approved {
+            background: #55efc4;
+            color: #00b894;
+        }
+
+        .status-rejected {
+            background: #ff7675;
+            color: #d63031;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn-approve {
+            background: #00b894;
+            color: white;
+        }
+
+        .btn-reject {
+            background: #d63031;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #636e72;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>管理员控制台</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/admin/dashboard">仪表板</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/admin/users">用户管理</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/movies">电影管理</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/reviews">评论管理</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/logs">访问日志</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/logout">退出登录</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="content-header">
+                <h1 class="content-title">用户管理</h1>
+            </div>
+
+            <div class="users-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th>邮箱</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${users == null || users.empty}">
+                            <td colspan="4" style="text-align: center;">暂无用户数据</td>
+                        </tr>
+                        <tr th:each="user : ${users}" th:if="${users != null && !users.empty}">
+                            <td th:text="${user.username}">用户名</td>
+                            <td th:text="${user.email}">邮箱</td>
+                            <td>
+                                <span class="status-badge" 
+                                      th:classappend="${'status-' + #strings.toLowerCase(user.status)}"
+                                      th:text="${user.status}">状态</span>
+                            </td>
+                            <td class="action-buttons">
+                                <form th:action="@{/admin/users/{id}/status(id=${user.id})}" 
+                                      method="post" style="display: inline;">
+                                    <input type="hidden" name="status" value="APPROVED">
+                                    <button type="submit" class="btn btn-approve" 
+                                            th:if="${user.status.name() == 'PENDING'}">批准</button>
+                                </form>
+                                <form th:action="@{/admin/users/{id}/status(id=${user.id})}" 
+                                      method="post" style="display: inline;">
+                                    <input type="hidden" name="status" value="REJECTED">
+                                    <button type="submit" class="btn btn-reject" 
+                                            th:if="${user.status.name() == 'PENDING'}">拒绝</button>
+                                </form>
+                                <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" 
+                                      method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-delete" 
+                                            onclick="return confirm('确定要删除此用户吗？')">删除</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

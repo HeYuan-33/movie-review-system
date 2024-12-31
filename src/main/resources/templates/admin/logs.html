@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>访问日志 - hh影评网站</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            padding: 2rem 0;
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+            color: #ecf0f1;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .nav-item:hover {
+            background: #34495e;
+        }
+
+        .nav-item.active {
+            background: #3498db;
+        }
+
+        .nav-item a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .content-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .content-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        .logs-table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .logs-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .logs-table th,
+        .logs-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .logs-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .logs-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .search-input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .search-button {
+            padding: 12px 30px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .search-button:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .search-button:active {
+            transform: translateY(1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>管理员控制台</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/admin/dashboard">仪表板</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/users">用户管理</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/movies">电影管理</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/reviews">评论管理</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/admin/logs">访问日志</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/logout">退出登录</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="content-header">
+                <h1 class="content-title">访问日志</h1>
+                <div class="search-box">
+                    <form th:action="@{/admin/logs}" method="get" class="search-form">
+                        <input type="text" name="search" th:value="${search}" 
+                               placeholder="搜索用户名/操作/IP..." class="search-input">
+                        <button type="submit" class="search-button">搜索</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="logs-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>用户</th>
+                            <th>操作</th>
+                            <th>IP地址</th>
+                            <th>访问时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${logs == null || logs.empty}">
+                            <td colspan="4" style="text-align: center;">暂无访问记录</td>
+                        </tr>
+                        <tr th:each="log : ${logs}" th:if="${logs != null && !logs.empty}">
+                            <td th:text="${log.user != null ? log.user.username : '游客'}">用户名</td>
+                            <td th:text="${log.action}">操作</td>
+                            <td th:text="${log.ipAddress}">IP地址</td>
+                            <td th:text="${#temporals.format(log.timestamp, 'yyyy-MM-dd HH:mm:ss')}">访问时间</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

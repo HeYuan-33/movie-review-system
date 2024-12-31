@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电影管理 - hh影评网站</title>
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 250px;
+            background: #34495e;
+            color: white;
+            padding: 2rem 0;
+            position: fixed;
+            height: 100%;
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+            color: #ecf0f1;
+            font-size: 1.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .nav-item:hover {
+            background: #2c3e50;
+        }
+
+        .nav-item.active {
+            background: #3498db;
+        }
+
+        .nav-item a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            margin-left: 250px; /* 保证内容区域不会被侧边栏遮挡 */
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+
+        .content-title {
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
+        /* 错误提示样式 */
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        /* 电影管理样式 */
+        .add-movie-btn {
+            padding: 0.8rem 1.5rem;
+            background: #00b894;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .add-movie-btn:hover {
+            background: #00a884;
+        }
+
+        /* 电影列表 */
+        .movies-table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .movies-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .movies-table th,
+        .movies-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .movies-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .movies-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .movie-poster {
+            width: 60px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn-edit {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* 表单样式 */
+        .movie-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input[type="file"] {
+            display: none;
+        }
+
+        .custom-file-upload {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: #3498db;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .custom-file-upload:hover {
+            background: #2980b9;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* 搜索框样式 */
+        .search-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            padding: 0.8rem 1.2rem;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        .search-button {
+            padding: 0.8rem 1.5rem;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .search-button:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .search-button:active {
+            transform: translateY(1px);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-box {
+            margin-right: 1rem;
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .poster-preview {
+            margin-top: 1rem;
+            max-width: 200px;
+        }
+
+        .poster-preview img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .selected-file-name {
+            margin-left: 1rem;
+            color: #666;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group label::after {
+            content: "*";
+            color: #e74c3c;
+            margin-left: 4px;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: #fff;
+            margin: 50px auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>管理员控制台</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/admin/dashboard">仪表板</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/users">用户管理</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/admin/movies">电影管理</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/reviews">评论管理</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/logs">访问日志</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/logout">退出登录</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="content-header">
+                <h2 class="content-title">电影管理</h2>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <form th:action="@{/admin/movies}" method="get" class="search-form">
+                            <input type="text" name="search" th:value="${search}" 
+                                   placeholder="搜索电影名称/导演..." class="search-input">
+                            <button type="submit" class="search-button">搜索</button>
+                        </form>
+                    </div>
+                    <button class="add-movie-btn" onclick="showAddMovieForm()">添加电影</button>
+                </div>
+            </div>
+
+            <!-- 错误提示 -->
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error == 'save-failed'} ? '保存电影失败，请重试' : 
+                               ${error == 'delete-failed'} ? '删除电影失败，请重试' : 
+                               ${error == 'system-error'} ? '系统暂时遇到了一些问题，请稍后再试' : 
+                               '操作失败，请重试'">
+                </span>
+            </div>
+
+            <!-- 成功提示 -->
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success == 'save'} ? '保存电影成功' : 
+                               ${success == 'delete'} ? '删除电影成功' : '操作成功'">
+                </span>
+            </div>
+
+            <!-- 电影列表 -->
+            <div class="movies-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>海报</th>
+                            <th>电影名称</th>
+                            <th>导演</th>
+                            <th>上映年份</th>
+                            <th>评分</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${movies == null || movies.empty}">
+                            <td colspan="6" style="text-align: center;">暂无电影数据</td>
+                        </tr>
+                        <tr th:each="movie : ${movies}" th:if="${movies != null && !movies.empty}">
+                            <td>
+                                <img th:src="${movie.imageUrl}" alt="电影海报" class="movie-poster">
+                            </td>
+                            <td th:text="${movie.title}">电影名称</td>
+                            <td th:text="${movie.director}">导演</td>
+                            <td th:text="${movie.release_date}">上映年份</td>
+                            <td th:text="${movie.rating}">评分</td>
+                            <td class="action-buttons">
+                                <button class="btn btn-edit" th:onclick="'editMovie(' + ${movie.id} + ')'">编辑</button>
+                                <form th:action="@{/admin/movies/{id}/delete(id=${movie.id})}" method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-delete" 
+                                            onclick="return confirm('确定要删除这部电影吗？')">删除</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 添加/编辑电影模态框 -->
+            <div id="movieModal" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal" onclick="hideMovieForm()">&times;</span>
+                    <div id="movieForm" class="movie-form">
+                        <div class="form-title"></div>
+                        <form th:action="@{/admin/movies/save}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+                            <input type="hidden" id="movieId" name="id">
+                            <div class="form-group">
+                                <label for="title">电影名称 *</label>
+                                <input type="text" id="title" name="title" required 
+                                       minlength="1" maxlength="100" placeholder="请输入电影名称">
+                            </div>
+                            <div class="form-group">
+                                <label for="director">导演 *</label>
+                                <input type="text" id="director" name="director" required 
+                                       minlength="1" maxlength="50" placeholder="请输入导演名称">
+                            </div>
+                            <div class="form-group">
+                                <label for="release_date">上映年份 *</label>
+                                <input type="text" id="release_date" name="release_date" required 
+                                       pattern="[0-9]{4}" title="请输入4位数字的年份" placeholder="例如：2024">
+                            </div>
+                            <div class="form-group">
+                                <label for="description">电影简介 *</label>
+                                <textarea id="description" name="description" rows="4" required 
+                                          minlength="10" maxlength="1000" placeholder="请输入至少10个字符的电影简介"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="poster" class="custom-file-upload">
+                                    选择海报图片
+                                </label>
+                                <input type="file" id="poster" name="poster" accept="image/*">
+                                <span id="selectedFileName" class="selected-file-name"></span>
+                                <div class="poster-preview" id="posterPreview"></div>
+                            </div>
+                            <div class="form-buttons">
+                                <button type="button" class="btn btn-cancel" onclick="hideMovieForm()">取消</button>
+                                <button type="submit" class="btn btn-save">保存</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function showAddMovieForm() {
+                    const modal = document.getElementById('movieModal');
+                    modal.style.display = 'block';
+                    // 清空表单
+                    document.getElementById('movieId').value = '';
+                    document.getElementById('title').value = '';
+                    document.getElementById('director').value = '';
+                    document.getElementById('release_date').value = '';
+                    document.getElementById('description').value = '';
+                    document.getElementById('poster').value = '';
+                    document.getElementById('selectedFileName').textContent = '';
+                    document.getElementById('posterPreview').innerHTML = '';
+                    // 设置标题
+                    document.querySelector('.form-title').textContent = '添加新电影';
+                }
+
+                function hideMovieForm() {
+                    const modal = document.getElementById('movieModal');
+                    modal.style.display = 'none';
+                }
+
+                function editMovie(movieId) {
+                    // 获取电影数据并填充表单
+                    fetch(`/admin/movies/${movieId}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('获取电影数据失败');
+                            }
+                            return response.json();
+                        })
+                        .then(movie => {
+                            const modal = document.getElementById('movieModal');
+                            modal.style.display = 'block';
+                            document.getElementById('movieId').value = movie.id;
+                            document.getElementById('title').value = movie.title;
+                            document.getElementById('director').value = movie.director;
+                            document.getElementById('release_date').value = movie.release_date;
+                            document.getElementById('description').value = movie.description;
+                            // 显示当前海报
+                            const posterPreview = document.getElementById('posterPreview');
+                            if (movie.imageUrl) {
+                                posterPreview.innerHTML = `<img src="${movie.imageUrl}" alt="当前海报">`;
+                            }
+                            // 设置标题
+                            document.querySelector('.form-title').textContent = '编辑电影';
+                        })
+                        .catch(error => {
+                            console.error('获取电影数据失败:', error);
+                            alert('获取电影数据失败：' + error.message);
+                        });
+                }
+
+                function validateForm() {
+                    const title = document.getElementById('title').value.trim();
+                    const director = document.getElementById('director').value.trim();
+                    const release_date = document.getElementById('release_date').value.trim();
+                    const description = document.getElementById('description').value.trim();
+
+                    if (!title) {
+                        alert('请输入电影名称');
+                        return false;
+                    }
+                    if (!director) {
+                        alert('请输入导演名称');
+                        return false;
+                    }
+                    if (!release_date || !/^\d{4}$/.test(release_date)) {
+                        alert('请输入有效的上映年份（4位数字）');
+                        return false;
+                    }
+                    if (!description || description.length < 10) {
+                        alert('请输入至少10个字符的电影简介');
+                        return false;
+                    }
+
+                    // 添加表单提交前的调试信息
+                    console.log('提交的表单数据：', {
+                        id: document.getElementById('movieId').value,
+                        title: title,
+                        director: director,
+                        release_date: release_date,
+                        description: description,
+                        poster: document.getElementById('poster').files[0]
+                    });
+
+                    return true;
+                }
+
+                // 显示选择的文件预览
+                document.getElementById('poster').addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const fileName = file.name;
+                        document.getElementById('selectedFileName').textContent = fileName;
+                        
+                        // 显示图片预览
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const posterPreview = document.getElementById('posterPreview');
+                            posterPreview.innerHTML = `<img src="${e.target.result}" alt="海报预览">`;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        document.getElementById('selectedFileName').textContent = '';
+                        document.getElementById('posterPreview').innerHTML = '';
+                    }
+                });
+
+                // 点击模态框外部时关闭
+                window.onclick = function(event) {
+                    const modal = document.getElementById('movieModal');
+                    if (event.target == modal) {
+                        modal.style.display = 'none';
+                    }
+                }
+            </script>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>评论管理 - hh影评网站</title>
+    <style>
+        /* 复用基础样式 */
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            padding: 2rem 0;
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+            color: #ecf0f1;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .nav-item:hover {
+            background: #34495e;
+        }
+
+        .nav-item.active {
+            background: #3498db;
+        }
+
+        .nav-item a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .content-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+        }
+
+        /* 评论管理特定样式 */
+        .reviews-table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .reviews-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .reviews-table th,
+        .reviews-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .reviews-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .reviews-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .review-content {
+            max-width: 400px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .review-content:hover {
+            white-space: normal;
+            overflow: visible;
+        }
+
+        .rating-stars {
+            color: #f1c40f;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* 搜索栏样式 */
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .search-btn {
+            padding: 0.8rem 1.5rem;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .search-btn:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>管理员控制台</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/admin/dashboard">仪表板</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/users">用户管理</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/movies">电影管理</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/admin/reviews">评论管理</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/logs">访问日志</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/logout">退出登录</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="content-header">
+                <h1 class="content-title">评论管理</h1>
+            </div>
+
+            <!-- 搜索栏 -->
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" 
+                       placeholder="搜索电影名称或用户名...">
+                <button class="search-btn" onclick="searchReviews()">搜索</button>
+            </div>
+
+            <!-- 评论列表 -->
+            <div class="reviews-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>电影</th>
+                            <th>用户</th>
+                            <th>评分</th>
+                            <th>评论内容</th>
+                            <th>评论时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${reviews == null || reviews.empty}">
+                            <td colspan="6" style="text-align: center;">暂无评论数据</td>
+                        </tr>
+                        <tr th:each="review : ${reviews}" th:if="${reviews != null && !reviews.empty}">
+                            <td th:text="${review.movie.title}">电影名称</td>
+                            <td th:text="${review.user.username}">用户名</td>
+                            <td>
+                                <div class="rating-stars" th:text="${'★'.repeat(review.rating)}">★★★★★</div>
+                            </td>
+                            <td>
+                                <div class="review-content" th:text="${review.content}">评论内容</div>
+                            </td>
+                            <td th:text="${#dates.format(new java.util.Date(review.timestamp), 'yyyy-MM-dd HH:mm:ss')}">评论时间</td>
+                            <td class="action-buttons">
+                                <form th:action="@{/admin/reviews/{id}/delete(id=${review.id})}" 
+                                      method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-delete" 
+                                            onclick="return confirm('确定要删除这条评论吗？')">删除</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function searchReviews() {
+            const keyword = document.getElementById('searchInput').value;
+            window.location.href = `/admin/reviews?search=${encodeURIComponent(keyword)}`;
+        }
+
+        // 监听回车键
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchReviews();
+            }
+        });
+    </script>
+</body>
+</html> 

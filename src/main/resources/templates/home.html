@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hh影评网站首页</title>
+    <link href="/img/你好.jpg" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #e50914;
+            --secondary-color: #f5f5f5;
+            --card-background: rgba(255, 255, 255, 0.9);
+            --text-color: #333;
+            --hover-color: #fca311;
+            --gradient-start: rgba(255, 126, 95, 0.7);
+            --gradient-end: rgba(254, 180, 123, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', Arial, sans-serif;
+            background: url('/img/你好.jpg') center/cover no-repeat, 
+                        linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            background-attachment: fixed;  /* 背景固定，避免滚动时背景动 */
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        nav {
+            background-color: rgba(255, 255, 255, 0.85);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo a {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        nav ul {
+            display: flex;
+            list-style-type: none;
+        }
+
+        nav ul li {
+            margin-left: 2rem;
+        }
+
+        nav ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: var(--hover-color);
+        }
+
+        main {
+            padding-top: 100px;
+        }
+
+        .hero {
+            background-size: cover;  /* 背景图片填充 */
+            background-position: center;  /* 背景居中 */
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            color: #fff;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 4px;
+            width: 300px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-bar button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-bar button:hover {
+            background-color: var(--hover-color);
+            transform: translateY(-2px);
+        }
+
+        section {
+            margin: 4rem 0;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .movie-card {
+            background: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .movie-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .movie-image {
+            width: 100%;
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .movie-info {
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .movie-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .movie-rating {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .movie-rating .stars {
+            color: #ffd700;
+            margin-right: 0.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: var(--hover-color);
+        }
+
+        footer {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--text-color);
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .search-bar input {
+                width: 80%;
+            }
+
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        section h2 {
+            color: #f5c518;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid rgba(245, 197, 24, 0.3);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <div class="logo">
+                <a href="/">hh影评</a>
+            </div>
+            <ul>
+                <li><a href="javascript:void(0)" onclick="scrollToSection('all-movies')">所有影片</a></li>
+                <li><a href="javascript:void(0)" onclick="scrollToSection('top-rated')">高分影片</a></li>
+                <li><a href="/movie_rankings">排行榜</a></li>
+                <li><a href="/about">关于我们</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>欢迎来到hh影评网站</h1>
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="搜索影片" required>
+                    <button type="button" id="search-button">搜索</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="all-movies">
+            <h2>所有影片</h2>
+            <div id="movie-grid" class="movie-grid"></div>
+        </section>
+
+        <section id="top-rated">
+            <h2>高分影片</h2>
+            <div id="top-rated-grid" class="movie-grid"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 hh影评网站 | 版权所有</p>
+    </footer>
+
+    <script>
+        function createMovieCard(movie) {
+            return `
+                <div class="movie-card">
+                    <div class="movie-image" style="background-image: url('${movie.imageUrl}')"></div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <div class="movie-rating">
+                            <span class="stars">★</span>
+                            <span>${movie.rating ? movie.rating.toFixed(1) : '暂无评分'}</span>
+                        </div>
+                        <p class="movie-director">导演：${movie.director}</p>
+                        <a href="/movie/${movie.id}" class="btn">查看详情</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadMovies(url, containerId) {
+            try {
+                const response = await fetch(url);
+                const movies = await response.json();
+                const container = document.getElementById(containerId);
+                container.innerHTML = movies.map(createMovieCard).join('');
+            } catch (error) {
+                console.error('加载电影数据失败:', error);
+            }
+        }
+
+        // 搜索功能
+        function performSearch() {
+            const keyword = document.getElementById('search-input').value.trim();
+            if (keyword) {
+                loadMovies(`/api/movies/search?keyword=${encodeURIComponent(keyword)}`, 'movie-grid');
+            }
+        }
+
+        // 监听搜索按钮点击
+        document.getElementById('search-button').addEventListener('click', performSearch);
+
+        // 监听回车键
+        document.getElementById('search-input').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // 平滑滚动到指定区域
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // 页面加载时加载电影
+        window.onload = function() {
+            loadMovies('/api/movies', 'movie-grid');
+            loadMovies('/api/movies/top-rated', 'top-rated-grid');
+        }
+    </script>
+</body>
+
+</html>

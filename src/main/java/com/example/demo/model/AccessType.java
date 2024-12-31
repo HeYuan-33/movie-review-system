@@ -1,0 +1,19 @@
+package com.example.demo.model;
+
+public enum AccessType {
+    USER_LOGIN,
+    USER_LOGOUT,
+    USER_REGISTER,
+    ADMIN_LOGIN,
+    ADMIN_LOGOUT,
+    ADMIN_DASHBOARD,
+    ADMIN_USER_MANAGEMENT,
+    ADMIN_MOVIE_MANAGEMENT,
+    ADMIN_REVIEW_MANAGEMENT,
+    ADMIN_LOG_VIEW,
+    MOVIE_VIEW,
+    PAGE_VIEW,
+    REVIEW_CREATE,
+    REVIEW_UPDATE,
+    REVIEW_DELETE
+} 

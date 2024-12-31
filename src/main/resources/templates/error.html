@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>出错了 - hh影评网站</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #cccccc;
+        }
+
+        .error-message {
+            background: rgba(255, 0, 0, 0.1);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 2rem;
+            color: #ff9999;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: #ffd700;
+            color: #1a1a1a;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #ffed4a;
+        }
+
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .nav-logo {
+            color: #ffd700;
+            font-size: 1.5rem;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">hh影评</a>
+            <div class="nav-links">
+                <a href="/">首页</a>
+                <a href="/movie_rankings">排行榜</a>
+                <a href="/about">关于我们</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="error-container">
+        <h1>抱歉，出错了！</h1>
+        <p>系统暂时遇到了一些问题，请稍后再试。</p>
+        <div class="error-message" th:if="${errorMessage != null}">
+            <p th:text="${errorMessage}">错误详情</p>
+        </div>
+        <a href="/" class="back-button">返回首页</a>
+    </div>
+</body>
+</html> 

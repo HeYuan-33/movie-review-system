@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我们 - hh影评网站</title>
+    <style>
+        body {
+            font-family: 'Noto Sans SC', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            color: #1a1a1a;
+            margin-bottom: 3rem;
+        }
+
+        .team {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .team-member {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .team-member img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-bottom: 3px solid #f5c518;
+        }
+
+        .team-info {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .team-info h3 {
+            font-size: 1.6rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-info p {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .social-links {
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            font-size: 1.2rem;
+            color: #333;
+            margin: 0 10px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #ff9800;
+        }
+
+        .team-member .role {
+            font-size: 1.1rem;
+            color: #ff9800;
+            margin-top: 0.5rem;
+        }
+
+        .team-info .desc {
+            font-size: 1rem;
+            color: #777;
+            margin-top: 1rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>我们的小组成员</h1>
+        
+        <div class="team">
+            <!-- Team Member 1 -->
+            <div class="team-member">
+                <img src="/img/曹.jpg" alt="团队成员1">
+                <div class="team-info">
+                    <h3>曹馨冉</h3>
+                    <div class="role">数据收集</div>
+                    <p class="desc">曹馨冉是负责找寻电影电视剧材料的，并且设计数据库</p>
+                    <div class="social-links">
+                        <a href="#" target="_blank">学号：2023131001</a>
+                        <a href="#" target="_blank"></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Member 2 -->
+            <div class="team-member">
+                <img src="/img/李.jpg" alt="团队成员2">
+                <div class="team-info">
+                    <h3>李佳雯</h3>
+                    <div class="role">文档编写</div>
+                    <p class="desc">李佳雯是主要负责编写我们系统的各种文档，并且也参与数据的收集</p>
+                    <div class="social-links">
+                        <a href="#" target="_blank">学号：2023131004</a>
+                        <a href="#" target="_blank"></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Member 3 -->
+            <div class="team-member">
+                <img src="/img/洪.jpg" alt="团队成员3">
+                <div class="team-info">
+                    <h3>洪汇淇</h3>
+                    <div class="role">前端设计</div>
+                    <p class="desc">洪汇淇是我们小组的前端设计者，主要负责界面的美化</p>
+                    <div class="social-links">
+                        <a href="#" target="_blank">学号：2023131041</a>
+                        <a href="#" target="_blank"></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Member 4 -->
+            <div class="team-member">
+                <img src="/img/何.jpg" alt="团队成员4">
+                <div class="team-info">
+                    <h3>何圆</h3>
+                    <div class="role">后端开发</div>
+                    <p class="desc">何圆是主要负责服务器端开发、数据库管理和系统架构优化。</p>
+                    <div class="social-links">
+                        <a href="#" target="_blank">学号：2023131051</a>
+                        <a href="#" target="_blank"></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
