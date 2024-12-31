@@ -1,35 +1,798 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Movie Details</title>
+    <meta charset="UTF-8">
+    <title>电影详情 - hh影评网站</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .movie-detail {
+            display: flex;
+            gap: 4rem;
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .movie-poster {
+            flex: 0 0 280px;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .movie-poster::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            pointer-events: none;
+        }
+
+        .movie-poster img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: block;
+        }
+
+        .movie-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .movie-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 1.5rem;
+            color: #1a1a1a;
+            line-height: 1.2;
+        }
+
+        .movie-meta {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.5rem 1.5rem;
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .movie-meta strong {
+            color: #333;
+        }
+
+        .movie-rating {
+            background: #fff8e5;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .rating-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #f5c518;
+            line-height: 1;
+        }
+
+        .rating-max {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .movie-description {
+            line-height: 1.8;
+            color: #444;
+            font-size: 1.1rem;
+            margin: 0;
+            text-align: justify;
+        }
+
+        .reviews-section {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .reviews-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f2f5;
+        }
+
+        .reviews-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            color: #1a1a1a;
+        }
+
+        .review {
+            padding: 1.5rem;
+            margin: 0 -1.5rem;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .review:not(:last-child) {
+            border-bottom: 1px solid #eee;
+        }
+
+        .review:hover {
+            background-color: #f8f9fa;
+            transform: translateX(8px);
+        }
+
+        .review-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .review-meta strong {
+            color: #333;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .review-meta .time {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .review-meta .delete-btn {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .review-content {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #333;
+            margin: 1rem 0;
+            padding: 0 0.5rem;
+        }
+
+        .reply {
+            margin: 1rem 0 1rem 3rem;
+            padding: 1.2rem 1.5rem;
+            background: #f8f9fa;
+            border-left: 4px solid #4a90e2;
+            border-radius: 0 12px 12px 0;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .reply::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent #4a90e2 transparent transparent;
+        }
+
+        .reply:hover {
+            transform: translateX(8px);
+            background: #f0f4f8;
+        }
+
+        .reply-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .reply-form {
+            margin: 1.5rem 0 0 3rem;
+            display: flex;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .reply-input {
+            flex: 1;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .reply-input:focus {
+            border-color: #4a90e2;
+            background: white;
+            outline: none;
+            box-shadow: 0 2px 8px rgba(74,144,226,0.1);
+        }
+
+        .reply-btn {
+            background: #4a90e2;
+            color: white;
+            padding: 0 1.8rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .reply-btn:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(74,144,226,0.2);
+        }
+
+        .review-form {
+            margin-top: 3rem;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .review-form h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0 0 2rem;
+            color: #1a1a1a;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f2f5;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 1.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            resize: vertical;
+            min-height: 120px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        textarea:focus {
+            border-color: #4a90e2;
+            background: white;
+            outline: none;
+            box-shadow: 0 2px 8px rgba(74,144,226,0.1);
+        }
+
+        .star-rating {
+            display: inline-flex;
+            flex-direction: row-reverse;
+            gap: 0.5rem;
+            padding: 1rem 0;
+        }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            color: #ddd;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            line-height: 1;
+        }
+
+        .star-rating label:before {
+            content: '★';
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input:checked ~ label {
+            color: #ffb700;
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 2px rgba(255,183,0,0.4));
+        }
+
+        .rating-value {
+            font-size: 1.2rem;
+            color: #666;
+            margin-left: 1rem;
+            min-width: 3em;
+        }
+
+        .btn {
+            background: #f5c518;
+            color: black;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #e6b800;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(245,197,24,0.2);
+        }
+
+        .delete-btn {
+            background: #ff4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            opacity: 0.9;
+        }
+
+        .delete-btn:hover {
+            background: #cc0000;
+            transform: translateY(-1px);
+            opacity: 1;
+        }
+
+        .star-rating-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .star-rating-display .stars {
+            color: #ddd;
+            font-size: 1.2rem;
+            position: relative;
+            display: inline-block;
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
+        .star-rating-display .stars::before {
+            content: '★★★★★';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #f5c518;
+            width: var(--rating-percent);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .star-rating-display .stars::after {
+            content: '★★★★★';
+            white-space: nowrap;
+        }
+
+        .star-rating-display .rating-score {
+            color: #f5c518;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .write-review-btn {
+            background: #4a90e2;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .write-review-btn:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(74,144,226,0.2);
+        }
+
+        .write-review-btn svg {
+            width: 1.2em;
+            height: 1.2em;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 3rem 0;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .login-prompt {
+            text-align: center;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+
+        .login-prompt a {
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-prompt a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(10px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+
+        .review {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .reply {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .movie-detail {
+                flex-direction: column;
+                gap: 2rem;
+                padding: 2rem;
+            }
+
+            .movie-poster {
+                flex: 0 0 auto;
+                max-width: 240px;
+                margin: 0 auto;
+            }
+
+            .movie-title {
+                font-size: 2rem;
+            }
+
+            .reviews-section,
+            .review-form {
+                padding: 1.5rem;
+            }
+
+            .reply {
+                margin-left: 1.5rem;
+            }
+
+            .reply-form {
+                margin-left: 1.5rem;
+                flex-direction: column;
+            }
+
+            .reply-btn {
+                padding: 0.8rem;
+            }
+        }
+
+        .reply .review-content {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin: 0.5rem 0;
+            padding: 0;
+            color: #444;
+        }
+
+        .reply-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .reply {
+            margin: 0.8rem 0 0.8rem 3rem;
+            padding: 0.8rem 1.2rem;
+            background: #f8f9fa;
+            border-left: 3px solid #4a90e2;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .reply::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 4px;
+            border-style: solid;
+            border-color: transparent #4a90e2 transparent transparent;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn:hover {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .back-btn svg {
+            width: 1.2em;
+            height: 1.2em;
+        }
+    </style>
 </head>
 <body>
-<h2 th:text="${movie.title}"></h2>
-<p><strong>Director:</strong> <span th:text="${movie.director}"></span></p>
-<p><strong>Release Date:</strong> <span th:text="${movie.releaseDate}"></span></p>
-<p><strong>Rating:</strong> <span th:text="${movie.rating}"></span></p>
-<p><strong>Description:</strong> <span th:text="${movie.description}"></span></p>
+    <div class="container">
+        <a href="/home" class="back-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            返回首页
+        </a>
+        
+        <div class="movie-detail">
+            <div class="movie-poster">
+                <img th:src="${movie.imageUrl}" th:alt="${movie.title}">
+            </div>
+            <div class="movie-info">
+                <h1 class="movie-title" th:text="${movie.title}"></h1>
+                <div class="movie-meta">
+                    <strong>导演</strong>
+                    <span th:text="${movie.director}"></span>
+                    <strong>上映年份</strong>
+                    <span th:text="${movie.release_date}"></span>
+                </div>
+                <div class="movie-rating">
+                    <span class="rating-number" th:text="${movie.rating ?: '暂无评分'}"></span>
+                    <span class="rating-max" th:if="${movie.rating != null}">/ 10</span>
+                </div>
+                <div class="movie-description" th:text="${movie.description}"></div>
+            </div>
+        </div>
 
-<h3>Reviews</h3>
-<div th:each="review : ${movie.reviews}">
-  <p th:text="'User: ' + ${review.user.username}"></p>
-  <p th:text="'Rating: ' + ${review.rating}"></p>
-  <p th:text="${review.comment}"></p>
-</div>
+        <div class="reviews-section">
+            <div class="reviews-header">
+                <h2>影评</h2>
+                <div>
+                    <button th:if="${session.user != null}" 
+                            onclick="document.getElementById('reviewForm').style.display='block'"
+                            class="write-review-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        写影评
+                    </button>
+                    <a th:if="${session.user == null}" 
+                       href="/login" 
+                       class="write-review-btn">登录发表影评</a>
+                </div>
+            </div>
 
-<h3>Leave a Review</h3>
-<form action="/movie/review/{movie.id}" method="post">
-  <div>
-    <label for="rating">Rating:</label>
-    <input type="number" id="rating" name="rating" min="1" max="5" required>
-  </div>
-  <div>
-    <label for="comment">Comment:</label>
-    <textarea id="comment" name="comment" required></textarea>
-  </div>
-  <button type="submit">Submit Review</button>
-</form>
+            <div id="reviewForm" th:if="${session.user != null}" class="review-form" style="display: none;">
+                <h3>写影评</h3>
+                <form th:action="@{/movie/{id}/review(id=${movie.id})}" method="post">
+                    <div class="form-group">
+                        <label>评分：</label>
+                        <div style="display: flex; align-items: center;">
+                            <div class="star-rating">
+                                <input type="radio" id="star5" name="rating" value="10" onchange="updateRatingValue(this.value)"/>
+                                <label for="star5" title="10分"></label>
+                                <input type="radio" id="star4" name="rating" value="8" onchange="updateRatingValue(this.value)"/>
+                                <label for="star4" title="8分"></label>
+                                <input type="radio" id="star3" name="rating" value="6" onchange="updateRatingValue(this.value)"/>
+                                <label for="star3" title="6分"></label>
+                                <input type="radio" id="star2" name="rating" value="4" onchange="updateRatingValue(this.value)"/>
+                                <label for="star2" title="4分"></label>
+                                <input type="radio" id="star1" name="rating" value="2" onchange="updateRatingValue(this.value)" required/>
+                                <label for="star1" title="2分"></label>
+                            </div>
+                            <span class="rating-value">0分</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="content">影评内容：</label>
+                        <textarea id="content" name="content" 
+                                placeholder="写下您的观后感..." required></textarea>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="submit" class="btn">发表影评</button>
+                        <button type="button" class="btn" 
+                                style="background: #f0f2f5; color: #666;"
+                                onclick="document.getElementById('reviewForm').style.display='none'">取消</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div th:if="${reviews.empty}" class="empty-message">
+                暂无影评，来写第一条吧！
+            </div>
+            
+            <div th:each="review : ${reviews}" class="review">
+                <div class="review-meta">
+                    <strong th:text="${review.user.username}"></strong>
+                    <div class="star-rating-display">
+                        <span class="stars" th:style="'--rating-percent: ' + ${(review.rating / 10.0) * 100} + '%'"></span>
+                        <span class="rating-score" th:text="${#numbers.formatDecimal(review.rating, 1, 1)}"></span>
+                    </div>
+                    <span class="time" th:text="${#dates.format(new java.util.Date(review.timestamp), 'yyyy-MM-dd HH:mm')}"></span>
+                    <button th:if="${session.user != null && session.user.id == review.user.id}" 
+                            class="delete-btn"
+                            th:onclick="'deleteReview(' + ${review.id} + ')'">删除</button>
+                </div>
+                <div class="review-content" th:text="${review.content}"></div>
+
+                <!-- 回复列表 -->
+                <div th:each="reply : ${review.replies}" class="reply">
+                    <div class="reply-meta">
+                        <strong th:text="${reply.user.username}"></strong>
+                        <span th:text="${#dates.format(new java.util.Date(reply.timestamp), 'yyyy-MM-dd HH:mm')}"></span>
+                        <button th:if="${session.user != null && session.user.id == reply.user.id}" 
+                                class="delete-btn"
+                                th:onclick="'deleteReply(' + ${reply.id} + ')'">删除</button>
+                    </div>
+                    <div class="review-content" th:text="${reply.content}"></div>
+                </div>
+
+                <!-- 回复表单 -->
+                <div th:if="${session.user != null}" class="reply-form">
+                    <input type="text" th:id="'replyInput-' + ${review.id}" 
+                           class="reply-input" placeholder="写下你的回复...">
+                    <button class="reply-btn" th:onclick="'addReply(' + ${review.id} + ')'">回复</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="login-prompt" th:if="${session.user == null}">
+            <p>想要发表影评？请先 <a href="/login">登录</a></p>
+        </div>
+    </div>
+
+    <script>
+        // 删除评论
+        function deleteReview(reviewId) {
+            if (confirm('确定要删除这条评论吗？')) {
+                fetch(`/review/${reviewId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('删除失败，请稍后重试');
+                    }
+                });
+            }
+        }
+
+        // 删除回复
+        function deleteReply(replyId) {
+            if (confirm('确定要删除这条回复吗？')) {
+                fetch(`/reply/${replyId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('删除失败，请稍后重试');
+                    }
+                });
+            }
+        }
+
+        // 添加回复
+        function addReply(reviewId) {
+            const content = document.getElementById(`replyInput-${reviewId}`).value.trim();
+            if (!content) {
+                alert('请输入回复内容');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('content', content);
+
+            fetch(`/reply/review/${reviewId}`, {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    response.text().then(text => alert(text));
+                }
+            });
+        }
+
+        // 初始化评分显示
+        document.querySelectorAll('.star-rating-display .stars').forEach(stars => {
+            const ratingPercent = stars.style.getPropertyValue('--rating-percent');
+            stars.style.setProperty('--rating-percent', ratingPercent);
+        });
+
+        // 更新评分值显示
+        function updateRatingValue(value) {
+            const ratingValue = document.querySelector('.rating-value');
+            ratingValue.textContent = value + '分';
+        }
+    </script>
 </body>
 </html>

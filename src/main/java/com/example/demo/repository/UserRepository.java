@@ -4,10 +4,12 @@ import com.example.demo.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-// UserRepository 继承 JpaRepository，提供常用的 CRUD 操作
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
-
-    // 通过用户名查找用户
-    User findByUsername(String username);
+    Optional<User> findByUsername(String username);
+    boolean existsByUsername(String username);
+    List<User> findByStatus(User.Status status);
 }

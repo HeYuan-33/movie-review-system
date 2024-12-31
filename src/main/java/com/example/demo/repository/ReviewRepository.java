@@ -9,13 +9,10 @@ import java.util.List;
 // ReviewRepository 继承 JpaRepository，提供常用的 CRUD 操作
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
-
-    // 通过电影ID查找所有影评
+    boolean existsByUserIdAndMovieId(Integer userId, Integer movieId);
+    List<Review> findByMovieIdOrderByTimestampDesc(Integer movieId);
+    Double findAverageRatingByMovieId(Integer movieId);
     List<Review> findByMovieId(Integer movieId);
-
-    // 通过用户ID查找所有影评
     List<Review> findByUserId(Integer userId);
-
-    // 查找电影的影评及评分
-    List<Review> findByMovieIdAndUserId(Integer movieId, Integer userId);
+    List<Review> findByMovieTitleContainingOrUserUsernameContaining(String movieTitle, String username);
 }

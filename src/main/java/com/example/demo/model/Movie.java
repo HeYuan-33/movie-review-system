@@ -1,24 +1,30 @@
 package com.example.demo.model;
 
+import jakarta.persistence.*;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+@Entity
 public class Movie {
-
-    private String genre;
-    private String description;
-    private Double rating;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String title;
     private String director;
-    private String releaseDate;
+    private String description;
+    @Column(name = "rating")
+    private Double rating;
+    private String release_date;
+    @Column(name = "image_url")
+    private String imageUrl;
 
-    public String getGenre() {
-        return genre;
-    }
+    @OneToMany(mappedBy = "movie")
+    @JsonManagedReference 
+    private List<Review> reviews;
 
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
+    // Getters and Setters
     public Integer getId() {
         return id;
     }
@@ -43,14 +49,6 @@ public class Movie {
         this.director = director;
     }
 
-    public String getReleaseDate() {
-        return releaseDate;
-    }
-
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -67,5 +65,27 @@ public class Movie {
         this.rating = rating;
     }
 
-    // 构造函数、getter 和 setter 略
+    public String getRelease_date() {
+        return release_date;
+    }
+
+    public void setRelease_date(String release_date) {
+        this.release_date = release_date;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
