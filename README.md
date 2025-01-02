@@ -12,4 +12,10 @@
 * 系统能够记录普通用户的各类访问日志，并可以由管理员进行查询。
 
 ## 效果展示
+登录界面
 <img src="https://github.com/user-attachments/assets/bbd55de2-4072-439b-b860-1ab3548df9c1" width="500" height="300" />
+
+管理员
+<img src="https://github.com/user-attachments/assets/f59582ae-85fd-4242-bde1-562665702626" width= "500" heigth = "300" />
+
+
